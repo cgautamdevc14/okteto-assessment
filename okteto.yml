@@ -4,7 +4,7 @@ build:
     context: .
 
 deploy:
-  - kubectl apply -f role.yaml
+  - kubectl apply -f role.yml
   - kubectl apply -f k8s.yml
 
 dev:
