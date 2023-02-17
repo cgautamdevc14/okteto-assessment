@@ -1,12 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"context"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 }
 
 func helloServer(w http.ResponseWriter, r *http.Request) {
-	
+
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		fmt.Fprint(w, "E1")
@@ -36,6 +37,7 @@ func helloServer(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "E3")
 		panic(err.Error())
 	}
-	fmt.Fprint(w, "Reached here...")
+
+	fmt.Fprint(w, "Reached here now...")
 	fmt.Fprint(w, "There are %d pods in the cluster\n", len(pods.Items))
 }
