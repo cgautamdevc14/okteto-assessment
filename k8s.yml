@@ -49,4 +49,4 @@ spec:
               number: 8080
         path: /
         pathType: ImplementationSpecific
-kind: 
+
