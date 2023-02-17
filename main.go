@@ -156,7 +156,7 @@ func main() {
 		Name:      "pod_count",
 		Help:      "Number of pods in the gautam namespace",
 	}, func() float64 {
-		npods, err := controller.K8sApi.GetNPods("bbedward")
+		npods, err := controller.K8sApi.GetNPods("cgautamdevc14")
 		if err != nil {
 			return -1
 		}
