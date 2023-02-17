@@ -173,9 +173,9 @@ type OKtetoAPIController struct {
 	K8sApi *KubernetesAPI
 }
 
-// Return number of pods in bbedward namespace
+// Return number of pods in cgautamdevc14 namespace
 func (controller *OKtetoAPIController) Npods(w http.ResponseWriter, r *http.Request) {
-	npods, err := controller.K8sApi.GetNPods("bbedward")
+	npods, err := controller.K8sApi.GetNPods("cgautamdevc14")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf(`{"error": "%s"}`, err.Error())))
