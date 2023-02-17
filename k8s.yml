@@ -50,15 +50,3 @@ spec:
         path: /
         pathType: ImplementationSpecific
 kind: 
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: pod-listing-role-binding
-  namespace: default
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: cgautamdevc14
-roleRef:
-  kind: Role
-  name: pod-listing-role
-  apiGroup: rbac.authorization.k8s.io
