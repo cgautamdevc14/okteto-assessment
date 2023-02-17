@@ -44,15 +44,6 @@ func NewKubePod(name string, restarts int32, age time.Duration) *KubePod {
 	}
 }
 
-// func main() {
-// 	fmt.Println("Starting hello-world server...")
-// 	http.HandleFunc("/", helloServer)
-// 	http.HandleFunc("/pods", podsCounter)
-// 	if err := http.ListenAndServe(":8080", nil); err != nil {
-// 		panic(err)
-// 	}
-// }
-
 // func helloServer(w http.ResponseWriter, r *http.Request) {
 // 	fmt.Fprint(w, "Hello, world!")
 // 	// config, err := rest.InClusterConfig()
