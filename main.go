@@ -61,13 +61,14 @@ func helloServer(w http.ResponseWriter, r *http.Request) {
 }
 func podsCounter(w http.ResponseWriter, r *http.Request) {
 	config := getInClusterConfig()
-	clientset := getKubeClientset(config)
-	pods := getPods(clientset)
-	kubePods := createKubePods(pods)
-	fmt.Fprintf(w, "There are %d pods in the cluster\n", len(kubePods))
-	for _, pod := range kubePods {
-		fmt.Fprintf(w, "Pod name: %s, restarts: %d, age: %s\n", pod.name, pod.restarts, pod.age)
-	}
+	fmt.Fprint(w, "The number of pods running in your current namespace: "+string(len(getPods(getKubeClientset(config)).Items))+"	")
+	// clientset := getKubeClientset(config)
+	// pods := getPods(clientset)
+	// kubePods := createKubePods(pods)
+	// fmt.Fprintf(w, "There are %d pods in the cluster\n", len(kubePods))
+	// for _, pod := range kubePods {
+	// 	fmt.Fprintf(w, "Pod name: %s, restarts: %d, age: %s\n", pod.name, pod.restarts, pod.age)
+	// }
 
 }
 
