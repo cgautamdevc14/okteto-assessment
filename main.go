@@ -1,12 +1,18 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -24,19 +30,20 @@ import (
 // 	"k8s.io/client-go/rest"
 // )
 
-// type KubePod struct {
-// 	name     string
-// 	restarts int32
-// 	age      time.Duration
-// }
+type KubePod struct {
+	name     string
+	restarts int32
+	age      time.Duration
+}
 
-// func NewKubePod(name string, restarts int32, age time.Duration) *KubePod {
-// 	return &KubePod{
-// 		name:     name,
-// 		restarts: restarts,
-// 		age:      age,
-// 	}
-// }
+func NewKubePod(name string, restarts int32, age time.Duration) *KubePod {
+	return &KubePod{
+		name:     name,
+		restarts: restarts,
+		age:      age,
+	}
+}
+
 // func main() {
 // 	fmt.Println("Starting hello-world server...")
 // 	http.HandleFunc("/", helloServer)
@@ -70,70 +77,70 @@ import (
 // 	// fmt.Fprint(w, "There are %d pods in the cluster\n", len(pods.Items))
 
 // }
-// func podsCounter(w http.ResponseWriter, r *http.Request) {
-// 	config := getInClusterConfig()
-// 	fmt.Fprint(w, "The number of pods running in your current namespace: "+string(len(getPods(getKubeClientset(config)).Items))+"	")
-// 	// clientset := getKubeClientset(config)
-// 	// pods := getPods(clientset)
-// 	// kubePods := createKubePods(pods)
-// 	// fmt.Fprintf(w, "There are %d pods in the cluster\n", len(kubePods))
-// 	// for _, pod := range kubePods {
-// 	// 	fmt.Fprintf(w, "Pod name: %s, restarts: %d, age: %s\n", pod.name, pod.restarts, pod.age)
-// 	// }
+func podsCounter(w http.ResponseWriter, r *http.Request) {
+	config := getInClusterConfig()
+	fmt.Fprint(w, "The number of pods running in your current namespace: "+string(len(getPods(getKubeClientset(config)).Items))+"	")
+	// clientset := getKubeClientset(config)
+	// pods := getPods(clientset)
+	// kubePods := createKubePods(pods)
+	// fmt.Fprintf(w, "There are %d pods in the cluster\n", len(kubePods))
+	// for _, pod := range kubePods {
+	// 	fmt.Fprintf(w, "Pod name: %s, restarts: %d, age: %s\n", pod.name, pod.restarts, pod.age)
+	// }
 
-// }
+}
 
-// func getPods(cs *kubernetes.Clientset) *v1.PodList {
-// 	pods, err := cs.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
+func getPods(cs *kubernetes.Clientset) *v1.PodList {
+	pods, err := cs.CoreV1().Pods("cgautamdevc14").List(context.TODO(), metav1.ListOptions{})
 
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
+	if err != nil {
+		panic(err.Error())
+	}
 
-// 	return pods
-// }
+	return pods
+}
 
-// func getInClusterConfig() *rest.Config {
-// 	config, err := rest.InClusterConfig()
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
+func getInClusterConfig() *rest.Config {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		panic(err.Error())
+	}
 
-// 	return config
-// }
+	return config
+}
 
-// func getKubeClientset(cfg *rest.Config) *kubernetes.Clientset {
-// 	// creates the clientset
-// 	clientset, err := kubernetes.NewForConfig(cfg)
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
+func getKubeClientset(cfg *rest.Config) *kubernetes.Clientset {
+	// creates the clientset
+	clientset, err := kubernetes.NewForConfig(cfg)
+	if err != nil {
+		panic(err.Error())
+	}
 
-// 	return clientset
-// }
+	return clientset
+}
 
-// func createKubePods(podList *v1.PodList) []KubePod {
-// 	kubePods := make([]KubePod, 0, len(podList.Items))
+func createKubePods(podList *v1.PodList) []KubePod {
+	kubePods := make([]KubePod, 0, len(podList.Items))
 
-// 	for _, pod := range podList.Items {
-// 		podCreationTime := pod.GetCreationTimestamp()
-// 		podStatus := pod.Status
-// 		var restarts int32
+	for _, pod := range podList.Items {
+		podCreationTime := pod.GetCreationTimestamp()
+		podStatus := pod.Status
+		var restarts int32
 
-// 		name := pod.GetName()
-// 		age := time.Since(podCreationTime.Time).Round(time.Second)
+		name := pod.GetName()
+		age := time.Since(podCreationTime.Time).Round(time.Second)
 
-// 		for container := range pod.Spec.Containers {
-// 			restarts += podStatus.ContainerStatuses[container].RestartCount
-// 		}
+		for container := range pod.Spec.Containers {
+			restarts += podStatus.ContainerStatuses[container].RestartCount
+		}
 
-// 		kube := NewKubePod(name, restarts, age)
-// 		kubePods = append(kubePods, *kube)
+		kube := NewKubePod(name, restarts, age)
+		kubePods = append(kubePods, *kube)
 
-// 	}
+	}
 
-// 	return kubePods
-// }
+	return kubePods
+}
 
 func main() {
 	fmt.Println("Starting hello-world server...")
@@ -150,7 +157,11 @@ func main() {
 	controller := OKtetoAPIController{K8sApi: &KubernetesAPI{ClientSet: ClientSet}}
 	// Number of pods
 	http.HandleFunc("/npods", controller.Npods)
+
+	//sort pods
+	http.HandleFunc("/pods", controller.Pods)
 	// Prometheus metrics
+
 	promauto.NewGaugeFunc(prometheus.GaugeOpts{
 		Namespace: "cgautamdevc14",
 		Name:      "pod_count",
@@ -182,4 +193,42 @@ func (controller *OKtetoAPIController) Npods(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	fmt.Fprintf(w, "%d", npods)
+}
+
+// Return pods with sort functionality
+func (controller *OKtetoAPIController) Pods(w http.ResponseWriter, r *http.Request) {
+	// Get sort parameter
+	podResp, err := controller.K8sApi.GetPods("cgautamdevc14")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err.Error())))
+		return
+	}
+	// Get sort type if present
+	sort := strings.ToLower(r.URL.Query().Get("sort"))
+	if sort != "" && sort != string(SortName) && sort != string(SortAge) && sort != string(SortRestarts) {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf(`{"message": "invalid sort option. Valid options are \"%s\", \"%s\", or \"%s\""}`, SortName, SortAge, SortRestarts)))
+		return
+	} else if sort != "" {
+		sortDirection := strings.ToLower(r.URL.Query().Get("order"))
+		if sortDirection != "" && sortDirection != string(SortDescending) && sortDirection != string(SortAscending) {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(fmt.Sprintf(`{"message": "invalid sort direction. Valid options are \"%s\" or \"%s\""}`, SortAscending, SortDescending)))
+			return
+		} else if sortDirection == "" {
+			// Ascending by default
+			sortDirection = string(SortAscending)
+		}
+		// Perform sort
+		controller.K8sApi.SortPods(podResp, PodSortMethod(sort), PodSortDirection(sortDirection))
+	}
+	// Serialize and return response
+	marshalled, err := json.Marshal(podResp)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err.Error())))
+		return
+	}
+	w.Write(marshalled)
 }
