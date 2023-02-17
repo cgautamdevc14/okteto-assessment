@@ -24,19 +24,19 @@ func helloServer(w http.ResponseWriter, r *http.Request) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
-		fmt.Fprint("E1")
+		fmt.Fprint(w, "E1")
 	}
 
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
-		fmt.Fprint("E2")
+		fmt.Fprint(w, "E2")
 	}
 
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		panic(err.Error())
-		fmt.Fprint("E3")
+		fmt.Fprint(w, "E3")
 	}
-	fmt.Fprint("There are %d pods in the cluster\n", len(pods.Items))
+	fmt.Fprint(w, "There are %d pods in the cluster\n", len(pods.Items))
 }
