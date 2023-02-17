@@ -152,7 +152,7 @@ func main() {
 	http.HandleFunc("/npods", controller.Npods)
 	// Prometheus metrics
 	promauto.NewGaugeFunc(prometheus.GaugeOpts{
-		Namespace: "bbedward",
+		Namespace: "cgautamdevc14",
 		Name:      "pod_count",
 		Help:      "Number of pods in the gautam namespace",
 	}, func() float64 {
