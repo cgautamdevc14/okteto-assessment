@@ -22,20 +22,21 @@ func helloServer(w http.ResponseWriter, r *http.Request) {
 
 	config, err := rest.InClusterConfig()
 	if err != nil {
-		panic(err.Error())
 		fmt.Fprint(w, "E1")
+		panic(err.Error())
 	}
 
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		panic(err.Error())
 		fmt.Fprint(w, "E2")
+		panic(err.Error())
 	}
 
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		panic(err.Error())
 		fmt.Fprint(w, "E3")
+		panic(err.Error())
 	}
+	fmt.Fprint(w, "Reached here...")
 	fmt.Fprint(w, "There are %d pods in the cluster\n", len(pods.Items))
 }
