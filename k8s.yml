@@ -22,8 +22,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hello-world
-  annotations:
-    dev.okteto.com/auto-ingress: "true"
 spec:
   type: ClusterIP
   ports:
@@ -51,44 +49,3 @@ spec:
               number: 8080
         path: /
         pathType: ImplementationSpecific
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: role-manager
-rules:
-- apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["roles"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: role-manager-binding
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: okteto
-roleRef:
-  kind: ClusterRole
-  name: role-manager
-  apiGroup: rbac.authorization.k8s.io
-
----
-
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: pod-listing-role-binding
-  namespace: cgautamdevc14
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: cgautamdevc14
-roleRef:
-  kind: Role
-  name: pod-listing-role
-  apiGroup: rbac.authorization.k8s.io
