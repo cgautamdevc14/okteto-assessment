@@ -65,14 +65,3 @@ roleRef:
   kind: Role
   name: pod-listing-role
   apiGroup: rbac.authorization.k8s.io
-kind: RoleBinding
-metadata:
-  name: pod-listing-binding
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: okteto
-roleRef:
-  kind: Role
-  name: pod-listing-role
-  apiGroup: rbac.authorization.k8s.io
