@@ -18,8 +18,7 @@ func main() {
 }
 
 func helloServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello world!")
-
+	
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		fmt.Fprint(w, "E1")
